@@ -1,10 +1,11 @@
 from thread import start_new_thread
 
+SERVER_ADDR = "2342323"
 
 class IdaSyncClient(object):
-    def __init__(self, sock):
-        self._sock = sock
-        self._init_queue()
+    def __init__(self, change_callback):
+        self._change_callback = change_callback
+        self._sock = None
 
     def _init_queue(self):
         pass
