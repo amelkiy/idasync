@@ -21,6 +21,7 @@ class VersionsManager(object):
     def __init__(self):
         self._db_lock = Lock()
         self._ida_files = {}    # filename: IdaFile
+        self._new_connections_sock_server = None
         self._new_connections_sock = None
         self._sock_to_filename = {}     # sock: filename
 
@@ -60,7 +61,7 @@ class VersionsManager(object):
     def _server_updates_thread(self):
         while True:
             with self._db_lock:
-                sockets = map(lambda x: x.clients.values(), self._ida_files.values())
+                sockets = reduce(lambda x, y: x + y, map(lambda x: x.clients, self._ida_files.values()))
             sockets.append(self._new_connections_sock)
             rdfs, _, _ = select(sockets, [], [])
 
