@@ -42,29 +42,13 @@ class VersionsManager(object):
             
         return _g_instance
         
-    def create_client_socket(self, file_name, client_id):
-        client_sock = socket()
-        client_sock.connect(("localhost", SERVER_ADDR_NEW_CONNECTIONS))
-
-        init_file_cmd = {
-            'cmd': INIT_FILE_CMD,
-            'client_id': client_id,
-            'filename': file_name
-        }
-        Utils.send_all_with_length(self._main_thread_client_sock, json.dumps(init_file_cmd))
-        if Utils.recv_all_with_length(self._main_thread_client_sock)['success']:
-            raise Exception("Failed to initialize versions/sock for %s" % file_name)
-
-        return client_sock
-
-        '''
-                
-                self._locked_files[file_name] = LockedFile()
-                
-        with self._locked_files[file_name]:
-            locked_file = self._locked_files[file_name]
-        '''
-
+    def add_client_socket(self, sock, db_name, version)
+        with self._db_lock:
+            self.get_all_changes_for_version(db_name, version)
+            for change in changes:
+                data = json.dumps(change)
+                send_all_with_length(data)
+            self.add_client_socket(sock, db_name)
 
     @classmethod
     def init_server(cls):
