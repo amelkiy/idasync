@@ -53,7 +53,10 @@ class IdaSyncClient(object):
                     raise Exception("Too long input length: %d" % l)
                 data = self._sock.recv(l)
                 data = json.loads(data)
-                self._change_callback(data)
+                try:
+                    self._change_callback(data)
+                except:
+                    pass
             except:
                 traceback.print_exc()
                 time.sleep(0.1)
