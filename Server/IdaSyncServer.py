@@ -2,6 +2,7 @@ from socket import *
 from Common.Logger import Logger
 from Server.IdaSyncClient import IdaSyncClient
 from VersionsManager.VersionsManager import VersionsManager
+import random
 
 class IdaSyncServer(object):
     def __init__(self, port):
@@ -20,6 +21,6 @@ class IdaSyncServer(object):
 
         while 1:
             accepted_socket, address = self._sock.accept()
-            client_id = randim.randint(100000, 1000000)
+            client_id = random.randint(100000, 1000000)
             Logger.info("Accepted a connection from %s. Client id: %d" % (address, client_id))
             IdaSyncClient.start_threaded(accepted_socket, client_id)
