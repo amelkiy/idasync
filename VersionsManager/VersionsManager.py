@@ -59,9 +59,14 @@ class VersionsManager(object):
         cls.get_instance()._server_updates_thread()
 
     def _server_updates_thread(self):
+        self._new_connections_sock.connect()
         while True:
+            sockets = []
             with self._db_lock:
-                sockets = reduce(lambda x, y: x + y, map(lambda x: x.clients, self._ida_files.values()))
+                for ida_file in self._ida_files.values():
+                    for sock in ida_file.clients:
+                        sockets.append(sock)
+
             sockets.append(self._new_connections_sock)
             rdfs, _, _ = select(sockets, [], [])
 
