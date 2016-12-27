@@ -1,10 +1,10 @@
 from threading import Lock
 from thread import start_new_thread
 from struct import pack, unpack
-from Common.Utils import Utils
+from idasync.Common.Utils import Utils
 from socket import *
 import json
-from Common.Logger import Logger
+from idasync.Common.Logger import Logger
 
 INIT_FILE_CMD = 1
 SERVER_ADDR_NEW_CONNECTIONS = 12552

@@ -1,4 +1,4 @@
-from VersionsManager.VersionsManager import VersionsManager
+from idasync.VersionsManager.VersionsManager import VersionsManager
 
 class SingleFileManager(object):
     def __init__(self, file_name, client_id):
