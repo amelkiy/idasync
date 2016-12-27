@@ -19,7 +19,6 @@ class IdaSyncClient(object):
 
     def start(self):
         self._init_client()
-        
 
                 
     def _init_client(self):
