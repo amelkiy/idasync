@@ -4,6 +4,7 @@ from struct import pack, unpack
 from Common.Utils import Utils
 from socket import *
 import json
+from Common.Logger import Logger
 
 INIT_FILE_CMD = 1
 SERVER_ADDR_NEW_CONNECTIONS = 12552
@@ -41,18 +42,17 @@ class VersionsManager(object):
         return _g_instance
         
     def create_client_socket(self, file_name, client_id):
-        with self._db_lock:
-            client_sock = socket()
-            client_sock.connect(("localhost", SERVER_ADDR_NEW_CONNECTIONS))
+        client_sock = socket()
+        client_sock.connect(("localhost", SERVER_ADDR_NEW_CONNECTIONS))
 
-            init_file_cmd = {
-                'cmd': INIT_FILE_CMD,
-                'client_id': client_id,
-                'file_name': file_name
-            }
-            Utils.send_all_with_length(self._main_thread_client_sock, json.dumps(init_file_cmd))
-            if Utils.recv_all(self._main_thread_client_sock, 1) != '1':
-                raise Exception("Failed to initialize versions/sock for %s" % file_name)
+        init_file_cmd = {
+            'cmd': INIT_FILE_CMD,
+            'client_id': client_id,
+            'filename': file_name
+        }
+        Utils.send_all_with_length(self._main_thread_client_sock, json.dumps(init_file_cmd))
+        if Utils.recv_all_with_length(self._main_thread_client_sock)['success']:
+            raise Exception("Failed to initialize versions/sock for %s" % file_name)
 
         return client_sock
 
@@ -86,7 +86,14 @@ class VersionsManager(object):
             sock2 = sock.accept()[0]
             data = json.loads(Utils.recv_all_with_length(sock2))
             if data['cmd'] == SERVER_ADDR_NEW_CONNECTIONS:
-                pass
+                with self._db_lock:
+                    filename = data['filename']
+                    client_id = data['client_id']
+                    if filename in self._locked_files:
+                        self._locked_files[filename].clients[client_id] = sock2
+
+            else:
+                Logger.error("_server_new_connections_thread: Wrong cmd! %s" % str(data['cmd']))
 
     def _server_updates_thread(self):
         pass

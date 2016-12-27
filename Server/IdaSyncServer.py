@@ -4,6 +4,7 @@ from IdaSyncClient import IdaSyncClient
 from ..VersionsManager.VersionsManager import VersionsManager
 import random
 
+
 class IdaSyncServer(object):
     def __init__(self, port):
         self._port = port
