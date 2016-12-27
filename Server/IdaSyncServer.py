@@ -23,11 +23,7 @@ class IdaSyncServer(object):
         msg = json.loads(data)
         db_name = msg["db_name"]
         version = msg["version"]
-        changes = self._version_manager.get_all_changes_for_version(db_name, version)
-        for change in changes:
-            data = json.dumps(change)
-            send_all_with_length(data)
-        self._version_manager.add_client_socket(db_name, sock)
+        self._version_manager.add_client_socket(sock, db_name, version)
 
     def serve_forever(self):
         if not self._sock:
@@ -35,7 +31,7 @@ class IdaSyncServer(object):
 
         while True:
             accepted_socket, address = self._sock.accept()
-            #client_id = random.randint(100000, 1000000)
+            client_id = random.randint(100000, 1000000)
             Logger.info("Accepted a connection from %s. Client id: %d" % (address, client_id))
             #IdaSyncClient.start_threaded(accepted_socket, client_id)
             try:
