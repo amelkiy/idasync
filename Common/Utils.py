@@ -1,4 +1,4 @@
-from struct import pack, inpack
+from struct import pack, unpack
 
 class Utils(object):
     @classmethod

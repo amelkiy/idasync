@@ -1,7 +1,7 @@
 from thread import start_new_thread
 import threading
 from ..Common.Consts import Consts
-from ..Common.utils import recv_all_with_length, send_all_with_length
+from ..Common.utils import Utils
 import simplejson as json
 import socket
 import time
@@ -55,7 +55,7 @@ class IdaSyncClient(object):
     def _send(self, data):
         if isinstance(data, dict):
             data = json.dumps(data)
-        send_all_with_length(self._sock, data)
+        Utils.send_all_with_length(self._sock, data)
         
     def _disconnect_server(self):
         self._lock.acquire()
@@ -95,7 +95,7 @@ class IdaSyncClient(object):
                 continue
                 
             try:
-                data = recv_all_with_length(self._sock)
+                data = Utils.recv_all_with_length(self._sock)
                 msg = json.loads(data)
                 msg_id = msg["id"]
                 data = msg["data"]
