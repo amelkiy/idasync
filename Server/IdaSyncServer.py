@@ -1,6 +1,5 @@
 from socket import *
 from idasync.Common.Logger import Logger
-from idasync.Server.IdaSyncClient import IdaSyncClient
 from idasync.VersionsManager.VersionsManager import VersionsManager
 import random
 import json
