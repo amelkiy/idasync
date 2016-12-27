@@ -5,6 +5,7 @@ from idasync.Common.Utils import Utils
 from socket import *
 import json
 from idasync.Common.Logger import Logger
+from select import select
 
 INIT_FILE_CMD = 1
 SERVER_ADDR_NEW_CONNECTIONS = 12552
@@ -29,7 +30,7 @@ class LockedFile(object):
 class VersionsManager(object):
     def __init__(self):
         self._db_lock = Lock()
-        self._locked_files = {}
+        self._ida_files = {}
         self._main_thread_client_sock = None
         self._main_thread_server_sock = None
 
@@ -96,4 +97,15 @@ class VersionsManager(object):
                 Logger.error("_server_new_connections_thread: Wrong cmd! %s" % str(data['cmd']))
 
     def _server_updates_thread(self):
-        pass
+        while True:
+            sockets = []
+            with self._db_lock:
+                sockets = map(lambda x: x.clients.values(), self._ida_files.values())
+            sockets.append(self._new_connections_sock)
+            rdfs, _, _ = select(sockets, [], [])
+
+            for sock in rdfs:
+                if sock == self._new_connections_sock:
+                    self._new_connections_sock.recv(1)
+
+

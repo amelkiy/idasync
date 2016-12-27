@@ -20,15 +20,7 @@ class IdaSyncClient(object):
     def start(self):
         self._init_client()
         
-        while True:
-            rdfs, _, _ = select([self._sock, self._file_manager], [], [])
-            if self._sock in rdfs:
-                data = self._get_client_update()
-                self._update_server(data)
-                
-            if self._file_manager in rdfs:
-                data = self._get_server_update()
-                self._update_client(data)
+
                 
     def _init_client(self):
         data = Utils.recv_all_with_length(self._sock)
