@@ -77,16 +77,44 @@ class VersionsManager(object):
                         sockets.append(sock)
 
             sockets.append(self._new_connections_sock)
-            rdfs, _, _ = select(sockets, [], [])
+            rdfs, _, erfs = select(sockets, [], sockets)
 
             with self._db_lock:
+                for sock in erfs:
+                    self._remove_sock(sock)
+
                 for sock in rdfs:
+                    if sock in erfs:
+                        continue
+
                     if sock == self._new_connections_sock:
                         self._new_connections_sock.recv(1)
                     else:
-                        data = Utils.recv_all_with_length(sock)
+                        try:
+                            data = Utils.recv_all_with_length(sock)
+                        except:
+                            self._remove_sock(sock)
+                            continue
+
+                        if data == '':
+                            self._remove_sock(sock)
+                            continue
+
                         filename = self._sock_to_filename[sock]
                         ida_file = self._ida_files[filename]
                         ida_file.versions.append(data)
                         for client_sock in ida_file.clients:
                             Utils.send_all_with_length(client_sock, data)
+
+    def _remove_sock(self, sock):
+        try:
+            sock.close()
+        except:
+            pass
+
+        try:
+            filename = self._sock_to_filename[sock]
+            self._sock_to_filename.pop(sock)
+            self._ida_files[filename].clients.remove(sock)
+        except:
+            pass
