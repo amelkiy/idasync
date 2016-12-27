@@ -39,12 +39,15 @@ class VersionsManager(object):
                 new_ida_file.clients.append(sock)
                 self._ida_files[filename] = new_ida_file
             else:
-                changes = self.get_all_changes_for_version(filename, version)
+                changes = self._get_all_changes_for_version(filename, version)
                 for change in changes:
                     Utils.send_all_with_length(sock, change)
                     self._ida_files[filename].clients.append(sock)
 
             self._sock_to_filename[sock] = filename
+
+    def _get_all_changes_for_version(self, filename, version):
+        return self._ida_files[filename].versions[version + 1:]
 
     @classmethod
     def init_server(cls):
