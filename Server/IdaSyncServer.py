@@ -1,7 +1,7 @@
 from socket import *
-from Common.Logger import Logger
-from Server.IdaSyncClient import IdaSyncClient
-from VersionsManager.VersionsManager import VersionsManager
+from ..Common.Logger import Logger
+from IdaSyncClient import IdaSyncClient
+from ..VersionsManager.VersionsManager import VersionsManager
 import random
 
 class IdaSyncServer(object):

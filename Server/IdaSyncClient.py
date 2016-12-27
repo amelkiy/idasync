@@ -1,5 +1,5 @@
 from thread import start_new_thread
-from Commmon.Utils import Utils
+from ..Commmon.Utils import Utils
 
 class IdaSyncClient(object):
     def __init__(self, sock, client_id):
