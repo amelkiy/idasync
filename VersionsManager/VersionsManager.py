@@ -107,5 +107,3 @@ class VersionsManager(object):
             for sock in rdfs:
                 if sock == self._new_connections_sock:
                     self._new_connections_sock.recv(1)
-
-
