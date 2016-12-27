@@ -46,20 +46,29 @@ class VersionsManager(object):
                     self._ida_files[filename].clients.append(sock)
 
             self._sock_to_filename[sock] = filename
+        self._new_connections_sock.send('0')
 
     def _get_all_changes_for_version(self, filename, version):
         return self._ida_files[filename].versions[version + 1:]
 
     @classmethod
     def init_server(cls):
+        instance = cls.get_instance()
+        sock = socket()
+        sock.bind(("localhost", SERVER_ADDR_NEW_CONNECTIONS))
+        sock.listen(1)
         start_new_thread(cls._server_updates, ())
+        sock.accept()
+        instance._new_connections_sock_server = sock
 
     @classmethod
     def _server_updates(cls):
         cls.get_instance()._server_updates_thread()
 
     def _server_updates_thread(self):
-        self._new_connections_sock.connect()
+        self._new_connections_sock = socket()
+        self._new_connections_sock.connect(("localhost", SERVER_ADDR_NEW_CONNECTIONS))
+
         while True:
             sockets = []
             with self._db_lock:
