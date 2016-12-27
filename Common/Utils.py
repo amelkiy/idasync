@@ -1,10 +1,11 @@
 from struct import pack, unpack
 
+
 class Utils(object):
     @classmethod
     def recv_all(cls, sock, length):
         data = ''
-        while True:
+        while len(data) < length:
             temp = sock.recv(length - len(data))
             if temp == '':
                 raise Exception("recv_all - socket error")
@@ -18,6 +19,6 @@ class Utils(object):
         return cls.recv_all(sock, length)
         
     @classmethod
-    def send_all_with_with_length(cls, sock, data):
+    def send_all_with_length(cls, sock, data):
         sock.sendall(pack("<I", len(data)))
         sock.sendall(data)
