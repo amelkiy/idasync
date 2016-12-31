@@ -58,8 +58,7 @@ class VersionsManager(object):
         sock.bind(("localhost", SERVER_ADDR_NEW_CONNECTIONS))
         sock.listen(1)
         start_new_thread(cls._server_updates, ())
-        sock.accept()
-        instance._new_connections_sock_server = sock
+        instance._new_connections_sock_server = sock.accept()
 
     @classmethod
     def _server_updates(cls):
